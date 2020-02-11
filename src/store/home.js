@@ -17,23 +17,21 @@ export const getters = {
 };
   
 // Global Actions
-export const actions = {
+export const actionsHome = {
   setHello({ commit }, value) {
     commit("STORE_HELLO", value);
   },
-//   fetchAllAssetTypes({ commit }) {
-//     return this.$axios.get("/assets/api/1/assets/assettypes")
-//       .catch(error => console.log(error))
-//       .then(response => {
-//         const assetTypes = response.data;
-//         commit("SET_ASSET_TYPES", assetTypes);
-//       });
-//   }
+  setLanguage({ commit }, language) {
+    commit("SET_LANGUAGE", language);
+  },
 };
 
 // Global Mutations
-export const mutations = {
+export const mutationsHome = {
   STORE_HELLO(state, value){
     state.hello = value;
+  },
+  SET_LANGUAGE(state, language) {
+    state.lang = language;
   }
 };

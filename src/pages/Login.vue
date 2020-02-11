@@ -1,6 +1,6 @@
 <template>
       <v-container
-        class="fill-height"
+        class="fill-height login-background"
         fluid
       >
         <v-row
@@ -55,3 +55,10 @@
     },
   }
 </script>
+
+<style lang="scss" scoped>
+  .login-background {
+    background-image: url('../assets/hcmus-background.png') !important;
+    background-size: cover !important;
+  }
+</style>
