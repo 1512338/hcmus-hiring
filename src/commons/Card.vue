@@ -6,7 +6,7 @@
           <v-img
             height="200"
             width="200"
-            src="https://cdn.vuetifyjs.com/images/cards/store.jpg"
+            src="../assets/hcmus-image.jpg"
           ></v-img>
         </v-col>
       </v-row>

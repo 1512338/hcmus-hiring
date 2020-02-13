@@ -7,14 +7,21 @@ import { stateHome } from './home'
 import { actionsHome } from './home'
 import { mutationsHome } from './home'
 
+import { stateAuth } from './auth'
+import { actionsAuth } from './auth'
+import { mutationsAuth } from './auth'
+
 export default new Vuex.Store({
     state: {
-        ...stateHome
+        ...stateHome,
+        ...stateAuth
     },
     actions: {
-        ...actionsHome
+        ...actionsHome,
+        ...actionsAuth
     },
     mutations: {
-        ...mutationsHome
+        ...mutationsHome,
+        ...mutationsAuth
     }
 })
