@@ -151,6 +151,16 @@ import { mapActions } from "vuex";
           let isFull = Object.values(this.userForm).every(x => !!x)
           if(isFull){
             this.checkEmpty = false
+            this.userForm.company_name = this.userForm.companyName
+            delete this.userForm.companyName
+            if(this.userForm.password1 == this.userForm.password2){
+              this.userForm.password = this.userForm.password1
+              delete this.userForm.password1
+              delete this.userForm.password2
+            }
+            else{
+              return 0
+            } 
             this.register(this.userForm)
           }else{
             this.checkEmpty = true
