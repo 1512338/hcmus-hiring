@@ -36,15 +36,18 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12">
-                          <v-text-field label="Email*" required></v-text-field>
+                          <v-text-field v-model="userLogin.username" label="Email*" required></v-text-field>
                         </v-col>
                         <v-col cols="12">
-                          <v-text-field label="Password*" type="password" required></v-text-field>
+                          <v-text-field v-model="userLogin.password" label="Password*" type="password" required></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row style="justify-content:flex-end">
+                        <v-subheader :style="checkEmptyLogin==true ? 'color:red':''">Please fill full information above</v-subheader>
+                      </v-row>
+                      <v-row style="justify-content:flex-end">
                         <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-                        <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+                        <v-btn color="blue darken-1" text @click="loginAction()">Save</v-btn>
                       </v-row>
                     </v-container>
                     </v-tab-item>
@@ -126,6 +129,10 @@ import { mapActions } from "vuex";
           },
           dialog: false,
           tab: null,
+          userLogin:{
+            username:"",
+            password:""
+          },
           userForm:{
             email:"",
             fullname: "",
@@ -134,7 +141,8 @@ import { mapActions } from "vuex";
             password2: "",
             companyName: ""
           },
-          checkEmpty: null
+          checkEmpty: null,
+          checkEmptyLogin: null
         }
       },
       watch:{
@@ -145,8 +153,21 @@ import { mapActions } from "vuex";
       methods:{
         ...mapActions({
           setLanguage: "setLanguage",
-          register: "register"
+          register: "register",
+          login:"login"
         }),
+        loginAction(){
+          // eslint-disable-next-line no-console
+          console.log(this.userLogin)
+          let isFull = Object.values(this.userLogin).every(x => !!x)
+          if(isFull){
+            this.checkEmptyLogin = false
+            this.login(this.userLogin)
+          }
+          else{
+            this.checkEmptyLogin = true
+          }
+        },
         registerForm(){
           let isFull = Object.values(this.userForm).every(x => !!x)
           if(isFull){
