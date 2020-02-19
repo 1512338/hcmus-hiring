@@ -16,7 +16,7 @@
                 {{ $t('employers') }}
               </div>
               
-              <v-dialog v-model="dialog" persistent max-width="600px">
+              <v-dialog v-if="isLoginedUser==false" v-model="dialog" persistent max-width="600px">
                 <template v-slot:activator="{ on }">
                   <div style="cursor:pointer" v-on="on">
                     {{ $t('login') }}
@@ -91,6 +91,55 @@
                 
               </v-dialog>
 
+              <v-menu v-if="isLoginedUser==true"
+                :close-on-content-click="false"
+                :nudge-width="200"
+                offset-x
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    color="indigo"
+                    dark
+                    v-on="on"
+                  >
+                    {{userEmail}}
+                  </v-btn>
+                </template>
+
+                <v-card>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-avatar>
+                        <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                      </v-list-item-avatar>
+
+                      <v-list-item-content>
+                        <v-list-item-title>{{userEmail}}</v-list-item-title>
+                        <v-list-item-subtitle>Founder of HCMUS</v-list-item-subtitle>
+                      </v-list-item-content>
+
+                    </v-list-item>
+                  </v-list>
+
+                  <v-divider></v-divider>
+
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-title>Profile</v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item>
+                      <v-list-item-title>Settings</v-list-item-title>
+                    </v-list-item>
+
+                     <v-list-item @click="logoutAction">
+                      <v-list-item-title>Logout</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+
+                </v-card>
+              </v-menu>
+
               <v-select
                 style="max-width:150px; padding-top:25px"
                 :items="itemsLanguage"
@@ -102,6 +151,39 @@
             </v-col>
           </v-row>  
         </v-container>
+
+        <v-dialog
+          v-model="checkDisplayNotificationSuccessSignUp"
+          width="500"
+        >
+          <v-card>
+            <v-card-title
+              class="headline grey lighten-2"
+              primary-title
+            >
+              Registration Success
+            </v-card-title>
+
+            <v-card-text>
+              To ensure that the information from the company is accurate, we will contact you soon for confirmation.
+              After successful confirmation you will be logged in.
+              Thank you very much.
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary"
+                text
+                @click="checkDisplayNotificationSuccessSignUp = false"
+              >
+                I accept
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
       </v-toolbar>
     </v-card>
@@ -142,7 +224,10 @@ import { mapActions } from "vuex";
             companyName: ""
           },
           checkEmpty: null,
-          checkEmptyLogin: null
+          checkEmptyLogin: null,
+          checkDisplayNotificationSuccessSignUp: false,
+          isLoginedUser: false,
+          userEmail: null,
         }
       },
       watch:{
@@ -150,25 +235,60 @@ import { mapActions } from "vuex";
           this.changeLanguage(newValue)
         },
       },
+      created(){
+        let user = window.localStorage.getItem("userInfo")
+        if(user !== null){
+          this.userEmail = JSON.parse(user).email
+          this.isLoginedUser = true
+        }
+        else {
+          this.isLoginedUser = false
+        }
+      },
+      updated(){
+        let user = window.localStorage.getItem("userInfo")
+        if(user !== null){
+          this.userEmail = JSON.parse(user).email
+          this.isLoginedUser = true
+        }
+        else {
+          this.isLoginedUser = false
+        }
+      },
       methods:{
         ...mapActions({
           setLanguage: "setLanguage",
           register: "register",
-          login:"login"
+          login:"login",
+          logout:"logout"
         }),
+        logoutAction(){
+          this.logout()
+          this.$forceUpdate()
+        },
         loginAction(){
-          // eslint-disable-next-line no-console
-          console.log(this.userLogin)
+          let vm = this
           let isFull = Object.values(this.userLogin).every(x => !!x)
           if(isFull){
             this.checkEmptyLogin = false
-            this.login(this.userLogin)
+            this.login(this.userLogin).then(response=>{
+              if(response.status == 200){
+                this.dialog = false
+                Object.keys(this.userLogin).forEach(function(index) {
+                  vm.userLogin[index] = ""
+                });
+              }
+            }, error => {
+              // eslint-disable-next-line no-console
+              console.error("Login Error", error)
+            })
           }
           else{
             this.checkEmptyLogin = true
           }
         },
         registerForm(){
+          let vm = this
           let isFull = Object.values(this.userForm).every(x => !!x)
           if(isFull){
             this.checkEmpty = false
@@ -182,7 +302,18 @@ import { mapActions } from "vuex";
             else{
               return 0
             } 
-            this.register(this.userForm)
+            this.register(this.userForm).then(response=>{
+              if(response.status == 201){
+                this.dialog = false
+                this.checkDisplayNotificationSuccessSignUp = true
+                Object.keys(this.userForm).forEach(function(index) {
+                  vm.userForm[index] = ""
+                });
+              }
+            }, error => {
+              // eslint-disable-next-line no-console
+              console.error("Register Error", error)
+            })
           }else{
             this.checkEmpty = true
           }

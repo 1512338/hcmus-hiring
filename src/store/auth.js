@@ -3,7 +3,7 @@ import axios from 'axios';
 export const strict = false;
 
 const initialState = () => ({
-    user: {}
+    user: {},
   });
 export const stateAuth = initialState();
 
@@ -15,35 +15,44 @@ export const getters = {
 
 export const actionsAuth = {
     login({commit}, userAuth){
-        axios.post("http://127.0.0.1:8000/api/accounts/login", userAuth)
-        .then(response => {
-            commit("STORE_USER_INFO", response.data)
-            window.localStorage.setItem('userInfo', JSON.stringify(response.data));
-            axios.defaults.headers.common['Authorization'] = 'Token ' + response.data.token;
-        })
-        .catch(e=>{
-            // eslint-disable-next-line no-console
-            console.log(e)
+        return new Promise((resolve, reject) => {
+            axios.post("http://127.0.0.1:8000/api/accounts/login", userAuth)
+            .then(response => {
+                if(response.status == 200){
+                    commit("STORE_USER_INFO", response.data)
+                    window.localStorage.setItem('userInfo', JSON.stringify(response.data));
+                    axios.defaults.headers.common['Authorization'] = 'Token ' + response.data.token;
+                }
+                resolve(response);
+            }, error => {
+                reject(error);
+                commit("")
+            })
         })
     },
-    logout(){
+    logout({commit}){
         axios.defaults.headers.common['Authorization'] = '';
         window.localStorage.removeItem('userInfo');
+        commit("REMOVE_USER_INFO")
     },
-    register(user){
-        axios.post("http://127.0.0.1:8000/api/accounts/users/", user)
-        .then(response => {
-            return response
-        })
-        .catch(e=>{
-            // eslint-disable-next-line no-console
-            console.log(e)
+    register({commit}, user){
+        return new Promise((resolve, reject) => {
+            axios.post("http://127.0.0.1:8000/api/accounts/users/", user)
+            .then(response => {
+                resolve(response);
+            }, error => {
+                reject(error);
+                commit("")
+            })
         })
     }
 };
 
 export const mutationsAuth = {
     STORE_USER_INFO(state, user){
-        state.user = user;
+        state.user = user
+    },
+    REMOVE_USER_INFO(state){
+        state.user = {}
     }
 };
