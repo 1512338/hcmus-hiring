@@ -6,6 +6,7 @@ import store from './store';
 import vuetify from './plugins/vuetify';
 import i18n from './plugins/i18n';
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
+require('dotenv').config()
 
 Vue.config.productionTip = false
 

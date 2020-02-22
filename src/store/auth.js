@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 export const strict = false;
+const API_URL = process.env.VUE_APP_API_URL
 
 const initialState = () => ({
     user: {},
@@ -16,7 +17,7 @@ export const getters = {
 export const actionsAuth = {
     login({commit}, userAuth){
         return new Promise((resolve, reject) => {
-            axios.post("http://127.0.0.1:8000/api/accounts/login", userAuth)
+            axios.post(API_URL, userAuth)
             .then(response => {
                 if(response.status == 200){
                     commit("STORE_USER_INFO", response.data)
@@ -37,7 +38,7 @@ export const actionsAuth = {
     },
     register({commit}, user){
         return new Promise((resolve, reject) => {
-            axios.post("http://127.0.0.1:8000/api/accounts/users/", user)
+            axios.post(API_URL, user)
             .then(response => {
                 resolve(response);
             }, error => {

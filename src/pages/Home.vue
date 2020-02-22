@@ -81,8 +81,6 @@
                 </v-col>
             </v-row>
         </v-container>
-
-        <!-- <Footer class="footer" :style="`max-width:${getWindowWidth}`"/> -->
     </div>
 </template>
 
@@ -100,7 +98,7 @@ export default {
     data(){
         return{
             skillsSearch:['Java', 'PHP', 'Javascript','Python', 'Android','IOS'],
-            locationSearch:['TP.Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng']
+            locationSearch:['TP.Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng'],
         }
     },
     computed:{
